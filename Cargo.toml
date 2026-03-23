@@ -1,0 +1,74 @@
+[package]
+name         = "sphinx_inv"
+version      = "0.1.0"
+authors      = ["Sam Vente <savente93@proton.me>"]
+edition      = "2024"
+rust-version = "1.85"
+description  = "A rust library to parse Sphinx `objects.inv` files"
+readme       = "README.md"
+license      = "MIT"
+
+
+documentation = "https://docs.rs/sphinx_inv"
+repository    = "https://github.com/savente93/sphinx_inv"
+
+
+[lib]
+path = "src/lib.rs"
+
+
+[[bin]]
+path = "src/main.rs"
+name = "sphinx_inv"
+
+
+[dependencies]
+color-eyre          = "0.6"
+strum               = { version = "0.28.0", features = ["derive", "strum_macros"] }
+tracing             = { version = "0", features = ["attributes"] }
+tracing-subscriber  = "0"
+tracing-error       = "0"
+clap                = { version = "4", features = ["derive", "unicode", "cargo"] }
+clap-verbosity-flag = { version = "3.0.4", features = ["tracing"] }
+
+
+serde = { version = "1", features = ["derive"] }
+
+
+[dev-dependencies]
+tempfile          = "3.27.0"
+pretty_assertions = "1"
+
+
+[profile.release]
+debug         = 0
+lto           = "fat"
+codegen-units = 1
+strip         = "symbols"
+
+[profile.dev]
+debug = 0
+
+[profile.bench]
+inherits = "release"
+debug    = 2         # necessary for many profilers
+strip    = "none"    #only affects binary size, not runtime, but makes profiling easier
+
+# please tell me what to do Clippy-senpai
+[lints.clippy]
+pedantic                   = { level = "warn", priority = -1 }
+single_match               = "warn"
+single_match_else          = "warn"
+needless_match             = "warn"
+needless_late_init         = "warn"
+redundant_pattern_matching = "warn"
+redundant_pattern          = "warn"
+redundant_guards           = "warn"
+collapsible_match          = "warn"
+match_single_binding       = "warn"
+match_same_arms            = "warn"
+match_ref_pats             = "warn"
+match_bool                 = "warn"
+needless_bool              = "deny"
+unwrap_used                = "warn"
+expect_used                = "warn"
