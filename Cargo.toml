@@ -17,11 +17,6 @@ repository    = "https://github.com/savente93/sphinx_inv"
 path = "src/lib.rs"
 
 
-[[bin]]
-path = "src/main.rs"
-name = "sphinx_inv"
-
-
 [dependencies]
 color-eyre          = "0.6"
 strum               = { version = "0.28.0", features = ["derive", "strum_macros"] }
@@ -33,11 +28,14 @@ clap-verbosity-flag = { version = "3.0.4", features = ["tracing"] }
 
 
 serde = { version = "1", features = ["derive"] }
+lazy-regex = { version = "3.6.0", features = ["std"] }
+flate2 = "1.1.9"
 
 
 [dev-dependencies]
 tempfile          = "3.27.0"
 pretty_assertions = "1"
+assert_fs = "1.1.3"
 
 
 [profile.release]
