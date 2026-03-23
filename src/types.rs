@@ -126,7 +126,7 @@ pub enum PyRole {
 // pub enum RstRole {}
 
 #[derive(Debug)]
-pub struct ExternalSphinxRef {
+pub struct SphinxReference {
     pub name: String,
     // type is a reserved keyword
     pub sphinx_type: SphinxType,
@@ -135,7 +135,7 @@ pub struct ExternalSphinxRef {
     pub dispname: String,
 }
 
-impl TryFrom<&str> for ExternalSphinxRef {
+impl TryFrom<&str> for SphinxReference {
     type Error = RecordParseError;
 
     fn try_from(value: &str) -> Result<Self, Self::Error> {
@@ -148,7 +148,7 @@ impl TryFrom<&str> for ExternalSphinxRef {
                 dispname.to_string()
             };
             let location = location.replace("$", name);
-            Ok(ExternalSphinxRef {
+            Ok(SphinxReference {
                 name: name.to_owned(),
                 sphinx_type: SphinxType::try_from(sphinx_type)?,
                 priority: SphinxPriority::try_from(priority)?,

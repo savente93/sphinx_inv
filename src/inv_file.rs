@@ -8,7 +8,7 @@ use std::{
 use crate::{
     error::{RecordParseError, SphinxInvError},
     header::parse_sphinx_inv_header,
-    types::ExternalSphinxRef,
+    types::SphinxReference,
 };
 
 fn decompress_remaining_zlib_data<R: Read>(
@@ -27,20 +27,20 @@ fn decompress_remaining_zlib_data<R: Read>(
 
 pub fn parse_objects_inv<R: Read>(
     mut reader: BufReader<R>,
-) -> Result<Vec<ExternalSphinxRef>, SphinxInvError> {
+) -> Result<Vec<SphinxReference>, SphinxInvError> {
     let _header = parse_sphinx_inv_header(&mut reader)?;
 
     let decompressed = decompress_remaining_zlib_data(&mut reader)?;
 
     let refs = decompressed
         .lines()
-        .map(ExternalSphinxRef::try_from)
-        .collect::<Result<Vec<ExternalSphinxRef>, RecordParseError>>()?;
+        .map(SphinxReference::try_from)
+        .collect::<Result<Vec<SphinxReference>, RecordParseError>>()?;
 
     Ok(refs)
 }
 
-pub fn parse_objects_inv_file(path: &Path) -> Result<Vec<ExternalSphinxRef>, SphinxInvError> {
+pub fn parse_objects_inv_file(path: &Path) -> Result<Vec<SphinxReference>, SphinxInvError> {
     let file = File::open(path)?;
     let reader = BufReader::new(&file);
     parse_objects_inv(reader)
@@ -58,7 +58,7 @@ mod test {
     use crate::inv_file::{
         decompress_remaining_zlib_data, parse_objects_inv_file, parse_sphinx_inv_header,
     };
-    use crate::types::ExternalSphinxRef;
+    use crate::types::SphinxReference;
 
     fn write_test_header(header: &str) -> (TempDir, PathBuf) {
         let temp_dir = TempDir::new().unwrap();
@@ -178,7 +178,7 @@ mod test {
         let decompressed = decompress_remaining_zlib_data(&mut reader)?;
 
         for line in decompressed.lines() {
-            let sphinx_ref = ExternalSphinxRef::try_from(line);
+            let sphinx_ref = SphinxReference::try_from(line);
             assert!(sphinx_ref.is_ok(), "failed to parse line: {line}");
         }
 
