@@ -16,6 +16,10 @@ repository    = "https://github.com/savente93/sphinx_inv"
 [lib]
 path = "src/lib.rs"
 
+[[bench]]
+name = "parsing_only"
+harness = false
+
 
 [dependencies]
 strum               = { version = "0.28.0", features = ["derive", "strum_macros"] }
@@ -33,7 +37,7 @@ thiserror = "2.0.18"
 tempfile          = "3.27.0"
 pretty_assertions = "1"
 assert_fs = "1.1.3"
-
+criterion = "0.5.1"
 
 [profile.release]
 debug         = 0
