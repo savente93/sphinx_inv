@@ -33,6 +33,9 @@ pub enum RecordParseError {
     #[error("Malformed domain field: {0}")]
     MalformedDomainField(String),
 
+    #[error("Malformed type: {0}")]
+    MalformedType(String),
+
     #[error("Malformed record: {0}")]
     MalformedRecord(String),
 }

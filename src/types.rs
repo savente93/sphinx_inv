@@ -29,28 +29,60 @@ impl TryFrom<&str> for SphinxPriority {
 
 #[derive(Debug, PartialEq)]
 pub enum SphinxType {
-    Std(StdRole),
+    // The std domain is also the "misc" domain so we don't bother entumerating every possibility
+    // here
+    Std(String),
     C(CRole),
     Python(PyRole),
     Cpp(CppRole),
     JavaScript(JsRole),
+    Java(JavaRole),
     Mathematics(MathRole),
-    // ReStructuredText(RstRole),
+    Zeek(ZeekRole),
+    ReStructuredText(RstRole),
+    Lrd(LrdRole),
+    Http(HttpRole),
+    StConf(StconfRole),
+    Syntax(SyntaxRole),
+    Sip(SipRole),
+    Config(ConfigRole),
+    Ocv(OcvRole),
+    Ruby(RubyRole),
+    Ls(LsRole),
+    Commands(CommandsRole),
+    Numpy(NumpyRole),
+    Php(PhpRole),
+    Cmake(CmakeRole),
 }
 
 impl TryFrom<&str> for SphinxType {
     type Error = RecordParseError;
 
     fn try_from(value: &str) -> Result<Self, Self::Error> {
-        match value.split_once(":") {
+        match value.split_once(':') {
             Some((domain, role)) => match domain {
-                "std" => Ok(SphinxType::Std(StdRole::from_str(role)?)),
+                "std" => Ok(SphinxType::Std(role.to_string())),
                 "c" => Ok(SphinxType::C(CRole::from_str(role)?)),
                 "cpp" => Ok(SphinxType::Cpp(CppRole::from_str(role)?)),
                 "py" => Ok(SphinxType::Python(PyRole::from_str(role)?)),
                 "js" => Ok(SphinxType::JavaScript(JsRole::from_str(role)?)),
+                "java" => Ok(SphinxType::Java(JavaRole::from_str(role)?)),
                 "math" => Ok(SphinxType::Mathematics(MathRole::from_str(role)?)),
-                // "rst" => Ok(SphinxType::ReStructuredText(RstRole::from_str(role)?)),
+                "zeek" => Ok(SphinxType::Zeek(ZeekRole::from_str(role)?)),
+                "rst" => Ok(SphinxType::ReStructuredText(RstRole::from_str(role)?)),
+                "lrd" => Ok(SphinxType::Lrd(LrdRole::from_str(role)?)),
+                "http" => Ok(SphinxType::Http(HttpRole::from_str(role)?)),
+                "stconf" => Ok(SphinxType::StConf(StconfRole::from_str(role)?)),
+                "syntax" => Ok(SphinxType::Syntax(SyntaxRole::from_str(role)?)),
+                "sip" => Ok(SphinxType::Sip(SipRole::from_str(role)?)),
+                "config" => Ok(SphinxType::Config(ConfigRole::from_str(role)?)),
+                "ocv" => Ok(SphinxType::Ocv(OcvRole::from_str(role)?)),
+                "rb" => Ok(SphinxType::Ruby(RubyRole::from_str(role)?)),
+                "ls" => Ok(SphinxType::Ls(LsRole::from_str(role)?)),
+                "commands" => Ok(SphinxType::Commands(CommandsRole::from_str(role)?)),
+                "np" => Ok(SphinxType::Numpy(NumpyRole::from_str(role)?)),
+                "php" => Ok(SphinxType::Php(PhpRole::from_str(role)?)),
+                "cmake" => Ok(SphinxType::Cmake(CmakeRole::from_str(role)?)),
                 _ => Err(RecordParseError::InvalidDomain(domain.to_string())),
             },
             None => Err(RecordParseError::MalformedDomainField(value.to_string())),
@@ -59,25 +91,17 @@ impl TryFrom<&str> for SphinxType {
 }
 
 #[derive(Debug, PartialEq, EnumString)]
-#[strum(serialize_all = "kebab-case")]
-pub enum StdRole {
-    Doc,
-    Label,
-    Term,
-    Cmdoption,
-    Pdbcommand,
-    Token,
-    Opcode,
-    MonitoringEvent,
-    Envvar,
-}
-#[derive(Debug, PartialEq, EnumString)]
 #[strum(serialize_all = "camelCase")]
 pub enum CRole {
     Enum,
     Enumerator,
     Function,
     FunctionParam,
+    Variable,
+    Define,
+    Namespace,
+    Typedef,
+    Enumvalue,
     Macro,
     Member,
     Type,
@@ -85,11 +109,95 @@ pub enum CRole {
     Struct,
     Union,
 }
+
+#[derive(Debug, PartialEq, EnumString)]
+#[strum(serialize_all = "camelCase")]
+pub enum HttpRole {
+    Get,
+    Post,
+    Head,
+    Copy,
+    Put,
+    Delete,
+    Patch,
+    Any,
+}
+#[derive(Debug, PartialEq, EnumString)]
+#[strum(serialize_all = "camelCase")]
+pub enum LrdRole {
+    Label,
+    Doc,
+}
+#[derive(Debug, PartialEq, EnumString)]
+#[strum(serialize_all = "camelCase")]
+pub enum PhpRole {
+    Function,
+    Method,
+    Const,
+    Interface,
+    Staticmethod,
+    Namespace,
+    Trait,
+    Class,
+}
+#[derive(Debug, PartialEq, EnumString)]
+#[strum(serialize_all = "snake_case")]
+pub enum CmakeRole {
+    Variable,
+    Module,
+    Manual,
+    PropCache,
+    Guide,
+    Genex,
+    Generator,
+    CpackGen,
+    Command,
+    Envvar,
+    PropTgt,
+    PropTest,
+    PropSf,
+    PropInst,
+    PropGbl,
+    PropDir,
+    Policy,
+}
+
+#[derive(Debug, PartialEq, EnumString)]
+#[strum(serialize_all = "camelCase")]
+pub enum NumpyRole {
+    Class,
+    Data,
+    Function,
+    Module,
+    Method,
+    Attribute,
+}
+#[derive(Debug, PartialEq, EnumString)]
+#[strum(serialize_all = "camelCase")]
+pub enum JavaRole {
+    Type,
+}
+#[derive(Debug, PartialEq, EnumString)]
+#[strum(serialize_all = "camelCase")]
+pub enum ZeekRole {
+    Id,
+    Keyword,
+    Attr,
+    Type,
+    Field,
+    Enum,
+    Namespace,
+}
 #[derive(Debug, PartialEq, EnumString)]
 #[strum(serialize_all = "camelCase")]
 pub enum CppRole {
     Class,
+    Union,
+    Concept,
     Function,
+    Type,
+    Enumerator,
+    Enum,
     FunctionParam,
     Member,
     TemplateParam,
@@ -100,6 +208,7 @@ pub enum JsRole {
     Module,
     Function,
     Method,
+    Attribute,
     Class,
     Data,
 }
@@ -110,20 +219,116 @@ pub enum MathRole {
 }
 #[derive(Debug, PartialEq, EnumString)]
 #[strum(serialize_all = "camelCase")]
+pub enum SipRole {
+    Class,
+    Method,
+    Member,
+    Enum,
+    Signal,
+    Attribute,
+    Module,
+}
+#[derive(Debug, PartialEq, EnumString)]
+#[strum(serialize_all = "camelCase")]
+pub enum SyntaxRole {
+    Rule,
+    Grammar,
+}
+#[derive(Debug, PartialEq, EnumString)]
+#[strum(serialize_all = "camelCase")]
 pub enum PyRole {
     Attribute,
+    Namedtuple,
+    Attr,
+    Type,
     Data,
     Exception,
+    Classmethod,
     Function,
+    Field,
+    Enum,
+    Staticmethod,
     Method,
     Module,
     Property,
     Class,
+    Interface,
+    Parameter,
+    Model,
 }
 
-// #[derive(Debug, PartialEq, EnumString)]
-// #[strum(serialize_all = "camelCase")]
-// pub enum RstRole {}
+#[derive(Debug, PartialEq, EnumString)]
+#[strum(serialize_all = "camelCase")]
+pub enum ConfigRole {
+    Option,
+}
+#[derive(Debug, PartialEq, EnumString)]
+#[strum(serialize_all = "camelCase")]
+pub enum LsRole {
+    Member,
+    Require,
+    Method,
+    Trait,
+    Type,
+    Provide,
+}
+#[derive(Debug, PartialEq, EnumString)]
+#[strum(serialize_all = "camelCase")]
+pub enum OcvRole {
+    Cfunction,
+    Function,
+    Enum,
+    Class,
+    Member,
+    Pyfunction,
+    Struct,
+    Pyoldfunction,
+    Emember,
+}
+
+#[derive(Debug, PartialEq, EnumString)]
+#[strum(serialize_all = "snake_case")]
+pub enum RubyRole {
+    Option,
+    AttrReader,
+    Module,
+    Class,
+    Method,
+    Const,
+    AttrAccessor,
+}
+
+#[derive(Debug, PartialEq, EnumString)]
+#[strum(serialize_all = "camelCase")]
+pub enum CommandsRole {
+    Option,
+    Command,
+}
+#[derive(Debug, PartialEq, EnumString)]
+#[strum(serialize_all = "camelCase")]
+pub enum StconfRole {
+    Option,
+}
+
+#[derive(Debug, PartialEq)]
+pub enum RstRole {
+    Role,
+    DirectiveOption,
+    Directive,
+}
+
+impl FromStr for RstRole {
+    type Err = RecordParseError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "role" => Ok(RstRole::Role),
+            "directive:option" => Ok(RstRole::DirectiveOption),
+            "directive" => Ok(RstRole::Directive),
+            _ => Err(RecordParseError::InvalidDomain(s.to_string())),
+        }
+    }
+}
 
 #[derive(Debug)]
 pub struct ExternalSphinxRef {
@@ -142,12 +347,15 @@ impl TryFrom<&str> for ExternalSphinxRef {
         if let Some((_whole, name, sphinx_type, priority, location, dispname)) =
             regex_captures!(r"(.+?)\s+(\S+)\s+(-?\d+)\s+?(\S*)\s+(.*)", &value)
         {
+            if !sphinx_type.contains(':') {
+                return Err(RecordParseError::MalformedType(sphinx_type.to_string()));
+            }
             let display_name = if dispname == "-" {
                 name.to_string()
             } else {
                 dispname.to_string()
             };
-            let location = location.replace("$", name);
+            let location = location.replace('$', name);
             Ok(ExternalSphinxRef {
                 name: name.to_owned(),
                 sphinx_type: SphinxType::try_from(sphinx_type)?,
@@ -297,18 +505,10 @@ mod test {
         Ok(())
     }
     #[test]
-    fn test_sphinx_type_parsing_std() -> Result<(), RecordParseError> {
+    fn test_sphinx_type_parsing_rst() -> Result<(), RecordParseError> {
         assert_eq!(
-            SphinxType::try_from("std:doc")?,
-            SphinxType::Std(StdRole::Doc)
-        );
-        assert_eq!(
-            SphinxType::try_from("std:label")?,
-            SphinxType::Std(StdRole::Label)
-        );
-        assert_eq!(
-            SphinxType::try_from("std:term")?,
-            SphinxType::Std(StdRole::Term)
+            SphinxType::try_from("rst:directive:option")?,
+            SphinxType::ReStructuredText(RstRole::DirectiveOption)
         );
         Ok(())
     }
