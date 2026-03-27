@@ -49,11 +49,11 @@ pub fn parse_objects_inv_file(path: &Path) -> Result<Vec<ExternalSphinxRef>, Sph
 #[cfg(test)]
 mod test {
     use assert_fs::TempDir;
-    use std::fs::File;
+    use std::fs::{self, File};
     use std::io::{BufReader, Write};
     use std::path::PathBuf;
 
-    use crate::error::SphinxInvError;
+    use crate::error::{RecordParseError, SphinxInvError};
     use crate::header::SphinxInvVersion;
     use crate::inv_file::{
         decompress_remaining_zlib_data, parse_objects_inv_file, parse_sphinx_inv_header,
@@ -191,5 +191,26 @@ mod test {
         let _ = parse_objects_inv_file(&filename)?;
 
         Ok(())
+    }
+    #[test]
+    fn test_parse_giant() {
+        let path = PathBuf::from("tests/sphinx_objects/giant.inv");
+
+        #[allow(clippy::unwrap_used)]
+        let giant_payload: String = fs::read_to_string(path).unwrap();
+
+        let mut failed = Vec::new();
+        for line in giant_payload.lines() {
+            let result = ExternalSphinxRef::try_from(line);
+            match result {
+                Ok(_) | Err(RecordParseError::MalformedType(_)) => (),
+                _ => failed.push((line, result)),
+            }
+            // I don't like the std:label exemption either but that's what Sphinx itself
+            // does and at least for now it dosn't seem liek there's a way to fix that if
+            // shpinx itself doesn't do any escaping
+        }
+
+        assert!(failed.is_empty(), "{failed:?}");
     }
 }

@@ -540,6 +540,7 @@ checksum = "67b1b7a3b5fe4f1376887184045fcf45c69e92af734b7aaddc05fb777b6fbd03"
 name = "sphinx_inv"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "assert_fs",
  "flate2",
  "lazy-regex",
@@ -551,6 +552,7 @@ dependencies = [
  "tracing",
  "tracing-error",
  "tracing-subscriber",
+ "winnow",
 ]
 
 [[package]]
@@ -802,6 +804,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc"
 dependencies = [
  "windows-link",
+]
+
+[[package]]
+name = "winnow"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a90e88e4667264a994d34e6d1ab2d26d398dcdca8b7f52bec8668957517fc7d8"
+dependencies = [
+ "memchr",
 ]
 
 [[package]]
